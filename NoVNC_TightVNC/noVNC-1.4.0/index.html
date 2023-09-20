@@ -1,0 +1,36 @@
+<html>
+<head>
+<script>
+openSocket = () => {
+    let uri = "ws://localhost:3000/camera";
+    socket = new WebSocket(uri);
+    let msg = document.getElementById("msg");
+    socket.addEventListener('open', (e) => {
+        document.getElementById("status").innerHTML = "Opened";
+    });
+    socket.addEventListener('message', (e) => {
+        let ctx = msg.getContext("2d");
+        let image = new Image();
+        image.src = URL.createObjectURL(e.data);
+        image.addEventListener("load", (e) => {
+            ctx.drawImage(image, 0, 0, msg.width, msg.height);
+        });
+    });
+}
+</script>
+</head>
+<body style="margin: 0px; display: flex; flex-flow: row" onload="openSocket()">
+  <div style="overflow: hidden; display:inline-block;">
+    <iframe src="http://localhost:6081/vnc.html" style="width: 60vw; height: 100vh" frameBorder="0"></iframe>
+  </div>
+  <div style="width: 40vw">
+	<div id="status">
+            Connection failed. Somebody may be using the socket.
+        </div>
+        <div style="text-align: center">
+            <canvas id="msg" width="960" height="720" style="display:inline-block" />
+        </div>
+        <!-- <iframe src="http://localhost:5500/cam.html" style="width: 60vw; height: 100vh" frameBorder="0"></iframe> -->
+  </div>
+</body>
+</html>
